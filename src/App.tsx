@@ -22,7 +22,7 @@ const App = () => (
     <AppProvider>
       <TooltipProvider>
         <Sonner />
-        <BrowserRouter basename="/musemind">
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/home" element={<Home />} />

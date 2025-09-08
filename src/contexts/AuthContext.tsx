@@ -204,7 +204,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(transformedUser);
 
       toast.success("Account created successfully!");
-      navigate("/musemind/");
+      navigate("/");
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Signup Failed");
       throw error;
@@ -236,7 +236,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(transformedUser);
 
       toast.success(response.data.message);
-      navigate("/musemind/");
+      navigate("/");
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Login Failed");
       throw error;
