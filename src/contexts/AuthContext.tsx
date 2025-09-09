@@ -171,7 +171,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             localStorage.removeItem("user_iv");
           } finally {
             toast.error("Your session has expired. Please log in again.");
-            window.location.replace("/login");
+            window.location.href = "/login";
           }
           return Promise.reject(refreshErr);
         }
