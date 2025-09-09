@@ -188,9 +188,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     try {
       console.log("formdata from the context for signup", formData);
-      const response = await axios.post(`${BASE_URL}/auth/signup`, formData, {
-        withCredentials: true,
-      });
+      const response = await api.post(`/auth/signup`, formData);
       const userData = response.data.user;
       const transformedUser = {
         id: userData.id,
@@ -219,9 +217,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     try {
       // console.log("formdata from the context for login", formData);
-      const response = await axios.post(`${BASE_URL}/auth/login`, formData, {
-        withCredentials: true,
-      });
+      const response = await api.post(`/auth/login`, formData);
 
       const userData = response.data.user;
       const transformedUser = {
@@ -247,11 +243,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async (navigate: (path: string) => void) => {
     try {
-      await axios.post(
-        `${BASE_URL}/auth/logout`,
-        {},
-        { withCredentials: true }
-      );
+      await api.post(`/auth/logout`);
 
       setUser(null);
       setSavedTracks([]);
