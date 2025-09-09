@@ -7,6 +7,7 @@ import { updateEncryptedUser } from "@/utils/secureStorage";
 import { useNavigate } from "react-router-dom";
 import { rejects } from "assert";
 import api from "@/utils/api";
+import { nav } from "@/utils/navigation";
 
 // ---------- Types ----------
 interface SignupData {
@@ -115,7 +116,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             localStorage.removeItem("user_iv");
           } finally {
             toast.error("Your session has expired. Please log in again.");
-            window.location.href = "/login";
+            // window.location.href = "/login";
+            nav("/login", { replace: true });
           }
           return Promise.reject(error);
         }
@@ -139,7 +141,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                   localStorage.removeItem("user_iv");
                 } finally {
                   toast.error("Your session has expired. Please log in again.");
-                  window.location.href = "/login";
+                  // window.location.href = "/login";
+                  nav("/login", { replace: true });
                 }
                 reject(error);
               }
@@ -171,7 +174,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             localStorage.removeItem("user_iv");
           } finally {
             toast.error("Your session has expired. Please log in again.");
-            window.location.href = "/login";
+            // window.location.href = "/login";
+            nav("/login", { replace: true });
           }
           return Promise.reject(refreshErr);
         }
