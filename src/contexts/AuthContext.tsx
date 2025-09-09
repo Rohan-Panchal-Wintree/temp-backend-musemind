@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     subscribersRef.current.push(cb);
   };
 
-  const atemptRefresh = () => {
+  const attemptRefresh = () => {
     if (!refreshPromiseRef.current) {
       console.log("refresh token function ran");
       refreshPromiseRef.current = api.post(`/auth/refresh`).finally(() => {
@@ -115,7 +115,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             localStorage.removeItem("user_iv");
           } finally {
             toast.error("Your session has expired. Please log in again.");
-            window.location.replace("/login");
+            window.location.href = "/login";
           }
           return Promise.reject(error);
         }
@@ -127,8 +127,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (isRefreshingRef.current) {
           return new Promise((resolve, reject) => {
             enqueueSubscriber((ok) => {
-              if (ok) resolve(axios(originalRequest));
-              else {
+              if (ok) {
+                (originalRequest as any).withCredentials = true;
+                resolve(api(originalRequest));
+              } else {
                 try {
                   // inline forced logout
                   setUser(null);
@@ -137,7 +139,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                   localStorage.removeItem("user_iv");
                 } finally {
                   toast.error("Your session has expired. Please log in again.");
-                  window.location.replace("/login");
+                  window.location.href = "/login";
                 }
                 reject(error);
               }
@@ -150,14 +152,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         try {
           console.log("requested for a new token");
-          await atemptRefresh();
+          await attemptRefresh();
           isRefreshingRef.current = false;
           notifySubscribers(true);
 
           await new Promise((res) => setTimeout(res, 100));
 
           // Retry the original request with the new access token (cookie)
-          return axios(originalRequest);
+          return api(originalRequest);
         } catch (refreshErr) {
           isRefreshingRef.current = false;
           notifySubscribers(false);
@@ -176,7 +178,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    return () => axios.interceptors.response.eject(id);
+    return () => api.interceptors.response.eject(id);
   }, [setSavedTracks, setUser]);
 
   // ---------- Actions ----------
