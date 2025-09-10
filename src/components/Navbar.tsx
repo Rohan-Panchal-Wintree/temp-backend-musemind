@@ -154,6 +154,8 @@ export const Navbar = () => {
                 Contact Us
               </Link>
 
+              <CurrencySelect />
+
               {/* Mobile Credits */}
               {isLoggedIn && (
                 <div className="flex items-center gap-2 px-2 py-1">
@@ -173,7 +175,8 @@ export const Navbar = () => {
                         variant="outline"
                         className="w-full border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
                       >
-                        👤 Profile
+                        <User className="w-4 h-4" />
+                        Profile
                       </Button>
                     </Link>
                     <Button
@@ -181,7 +184,8 @@ export const Navbar = () => {
                       variant="outline"
                       className="w-full border-red-500/30 text-red-400 hover:bg-red-500/10"
                     >
-                      🔓 Logout
+                      <LogOut className="w-4 h-4" />
+                      Logout
                     </Button>
                   </>
                 ) : (
@@ -191,12 +195,12 @@ export const Navbar = () => {
                         variant="outline"
                         className="w-full border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
                       >
-                        🔒 Login
+                        Login
                       </Button>
                     </Link>
                     <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
                       <Button className="w-full bg-gradient-to-r from-purple-600 to-green-600 hover:from-purple-700 hover:to-green-700">
-                        🔓 Sign Up
+                        Sign Up
                       </Button>
                     </Link>
                   </>
