@@ -33,6 +33,7 @@ const MAX_PRICE = 500;
 // payment merchantTransactionId=01234" \,paymentType=DB" \, "currency=EUR" \
 
 const Pricing = () => {
+  console.log("Pricing page mounted");
   const [showPayment, setShowPayment] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<{
     credits: number;
