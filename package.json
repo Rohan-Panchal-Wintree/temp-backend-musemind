@@ -6,7 +6,7 @@
   "homepage": ".",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm run copy-redirects",
     "build:dev": "vite build --mode development",
     "copy-redirects": "copyfiles -u 1 public/_redirects dist",
     "lint": "eslint .",
