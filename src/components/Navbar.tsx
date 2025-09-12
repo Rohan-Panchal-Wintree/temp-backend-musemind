@@ -154,7 +154,7 @@ export const Navbar = () => {
                 Contact Us
               </Link>
 
-              <CurrencySelect />
+              <CurrencySelect />  
 
               {/* Mobile Credits */}
               {isLoggedIn && (
