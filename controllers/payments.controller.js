@@ -45,7 +45,6 @@ export const initPayment = async (req, res) => {
       paymentMode: process.env.PAYMENT_MODE,
       currency: orderItem.currency,
       merchantRedirectUrl: process.env.MERCHANT_REDIRECT_URL,
-      notificationUrl: process.env.NOTIFICATION_URL,
     };
 
     const randomData = randomBytes(16).toString("hex");
@@ -57,9 +56,13 @@ export const initPayment = async (req, res) => {
 
     const checksum = createHash("md5").update(values).digest("hex");
 
+    // my "payment/forward/:id" is the notification url with merchant id setted as :id parameter of my backend route
+    // because the payment gateway sends a callback for which it requires a transaction id so that's why i have the :id setted as the parameter so my payment gateway will send a post request to my payment/forward/:id in which :id i already passes as the merchantTransactionId.
+    const notificationUrl = `${process.env.NOTIFICATION_URL}${merchantTransactionId}`;
+
     return res.json({
       forwardUrl,
-      paymentData: { ...f, checksum, merchantTransactionId },
+      paymentData: { ...f, checksum, merchantTransactionId, notificationUrl },
     });
   } catch (err) {
     console.error("initPayment error:", err);
@@ -73,66 +76,70 @@ export const initPayment = async (req, res) => {
 export const forwardPayment = async (req, res) => {
   const orderItemId = String(req.params.orderItemId);
 
-  const doc = await Orders.findOne({ "orders._id": orderItemId }).lean();
-  if (!doc) return res.status(404).send("Order not found");
+  const trackingId = req.body.trackingid;
+  console.log("notification param transaction id", orderItemId);
+  console.log("notification body tracking id", trackingId);
 
-  const item = doc.orders?.find((o) => String(o._id) === orderItemId) || null;
+  //   const doc = await Orders.findOne({ "orders._id": orderItemId }).lean();
+  //   if (!doc) return res.status(404).send("Order not found");
 
-  if (!item) return res.status(404).send("Order item not found");
+  //   const item = doc.orders?.find((o) => String(o._id) === orderItemId) || null;
 
-  // Security headers for the forward page
-  res.set({
-    "Content-Type": "text/html; charset=utf-8",
-    "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-    Pragma: "no-cache",
-    "X-Content-Type-Options": "nosniff",
-    "Referrer-Policy": "no-referrer",
-    "Content-Security-Policy":
-      "default-src 'none'; script-src 'unsafe-inline'; form-action https://secure.transactworld.com; base-uri 'none'; frame-ancestors 'none'",
-  });
+  //   if (!item) return res.status(404).send("Order item not found");
 
-  // Minimal inline escape to avoid XSS when injecting values
-  const h = (s = "") =>
-    String(s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
+  //   // Security headers for the forward page
+  //   res.set({
+  //     "Content-Type": "text/html; charset=utf-8",
+  //     "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+  //     Pragma: "no-cache",
+  //     "X-Content-Type-Options": "nosniff",
+  //     "Referrer-Policy": "no-referrer",
+  //     "Content-Security-Policy":
+  //       "default-src 'none'; script-src 'unsafe-inline'; form-action https://secure.transactworld.com; base-uri 'none'; frame-ancestors 'none'",
+  //   });
 
-  // Build fields on the fly
-  const f = {
-    memberId: process.env.TW_MEMBER_ID,
-    checksum: "heulzDyq6YrH6iTcvbbZztWeO8RsCdYA",
-    language: "ENG",
-    accountid: process.env.TW_ACCOUNT_ID,
-    totype: "Transactworld",
-    merchantTransactionId: orderItemId, // unique per order item
-    amount: item.amount,
-    currency: item.currency,
-    ip: req.ip,
-    paymentBrand: "VISA",
-  };
+  //   // Minimal inline escape to avoid XSS when injecting values
+  //   const h = (s = "") =>
+  //     String(s)
+  //       .replace(/&/g, "&amp;")
+  //       .replace(/</g, "&lt;")
+  //       .replace(/>/g, "&gt;")
+  //       .replace(/"/g, "&quot;")
+  //       .replace(/'/g, "&#39;");
 
-  res.send(`<!doctype html>
-<html>
-  <body>
-    <form method="POST" action="https://secure.transactworld.com/transaction/Checkout" id="gw">
-      <input type="hidden" name="memberId" value="${h(f.memberId)}">
-      <input type="hidden" name="checksum" value="${h(f.checksum)}">
-      <input type="hidden" name="language" value="${h(f.language)}">
-      <input type="hidden" name="accountid" value="${h(f.accountid)}">
-      <input type="hidden" name="totype" value="${h(f.totype)}">
-      <input type="hidden" name="merchantTransactionId" value="${h(
-        f.merchantTransactionId
-      )}">
-      <input type="hidden" name="amount" value="${h(f.amount)}">
-      <input type="hidden" name="currency" value="${h(f.currency)}">
-      <input type="hidden" name="ip" value="${h(f.ip)}">
-      <input type="hidden" name="paymentBrand" value="${h(f.paymentBrand)}">
-      <noscript><button type="submit">Continue</button></noscript>
-    </form>
-    <script>document.getElementById('gw').submit();</script>
-  </body>
-</html>`);
+  //   // Build fields on the fly
+  //   const f = {
+  //     memberId: process.env.TW_MEMBER_ID,
+  //     checksum: "heulzDyq6YrH6iTcvbbZztWeO8RsCdYA",
+  //     language: "ENG",
+  //     accountid: process.env.TW_ACCOUNT_ID,
+  //     totype: "Transactworld",
+  //     merchantTransactionId: orderItemId, // unique per order item
+  //     amount: item.amount,
+  //     currency: item.currency,
+  //     ip: req.ip,
+  //     paymentBrand: "VISA",
+  //   };
+
+  //   res.send(`<!doctype html>
+  // <html>
+  //   <body>
+  //     <form method="POST" action="https://secure.transactworld.com/transaction/Checkout" id="gw">
+  //       <input type="hidden" name="memberId" value="${h(f.memberId)}">
+  //       <input type="hidden" name="checksum" value="${h(f.checksum)}">
+  //       <input type="hidden" name="language" value="${h(f.language)}">
+  //       <input type="hidden" name="accountid" value="${h(f.accountid)}">
+  //       <input type="hidden" name="totype" value="${h(f.totype)}">
+  //       <input type="hidden" name="merchantTransactionId" value="${h(
+  //         f.merchantTransactionId
+  //       )}">
+  //       <input type="hidden" name="amount" value="${h(f.amount)}">
+  //       <input type="hidden" name="currency" value="${h(f.currency)}">
+  //       <input type="hidden" name="ip" value="${h(f.ip)}">
+  //       <input type="hidden" name="paymentBrand" value="${h(f.paymentBrand)}">
+  //       <noscript><button type="submit">Continue</button></noscript>
+  //     </form>
+  //     <script>document.getElementById('gw').submit();</script>
+  //   </body>
+  // </html>`);
 };
