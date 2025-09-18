@@ -104,6 +104,7 @@ const Pricing = () => {
         merchantTransactionId,
         currency,
         merchantRedirectUrl,
+        notificationUrl,
       } = data.paymentData;
 
       // Set form data to state to render the dynamic form
@@ -120,6 +121,7 @@ const Pricing = () => {
         currency,
         merchantRedirectUrl,
         forwardUrl: data.forwardUrl,
+        notificationUrl,
       });
     } catch (err: any) {
       console.error("Payment init failed", err);
@@ -259,6 +261,11 @@ const Pricing = () => {
                 type="hidden"
                 name="merchantRedirectUrl"
                 value={formData.merchantRedirectUrl}
+              />
+              <input
+                type="hidden"
+                name="notificationUrl"
+                value={formData.notificationUrl}
               />
             </form>
           )}
