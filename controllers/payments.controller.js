@@ -45,6 +45,7 @@ export const initPayment = async (req, res) => {
       paymentMode: process.env.PAYMENT_MODE,
       currency: orderItem.currency,
       merchantRedirectUrl: process.env.MERCHANT_REDIRECT_URL,
+      notificationUrl: process.env.NOTIFICATION_URL,
     };
 
     const randomData = randomBytes(16).toString("hex");

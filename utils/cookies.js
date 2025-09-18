@@ -22,13 +22,13 @@ export const clearAuthCookies = (res) => {
   res.clearCookie("token", {
     httpOnly: true,
     expires: new Date(0),
-    sameSite: "Lax",
+    sameSite: "None",
     path: "/",
     secure: isProd,
   });
   res.clearCookie("refresh_token", {
     httpOnly: true,
-    sameSite: "Lax",
+    sameSite: "None",
     path: "/",
     secure: isProd,
   });
