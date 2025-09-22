@@ -146,3 +146,5 @@ export const forwardPayment = async (req, res) => {
   //   </body>
   // </html>`);
 };
+
+export const redirectUrl = async (req, res) => {};
