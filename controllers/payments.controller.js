@@ -76,10 +76,10 @@ export const initPayment = async (req, res) => {
 
 // GET /api/payments/forward/:orderItemId
 export const forwardPayment = async (req, res) => {
-  const orderItemId = String(req.params.orderItemId);
   console.log("forward function ran");
+  const orderItemId = String(req.params.orderItemId);
 
-  const trackingId = req.body.trackingid;
+  const trackingId = req.body;
   console.log("notification param transaction id", orderItemId);
   console.log("notification body tracking id", trackingId);
 
