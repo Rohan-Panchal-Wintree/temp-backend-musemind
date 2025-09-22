@@ -60,6 +60,8 @@ export const initPayment = async (req, res) => {
     // because the payment gateway sends a callback for which it requires a transaction id so that's why i have the :id setted as the parameter so my payment gateway will send a post request to my payment/forward/:id in which :id i already passes as the merchantTransactionId.
     const notificationUrl = `${process.env.NOTIFICATION_URL}${merchantTransactionId}`;
 
+    console.log("notification url:", notificationUrl);
+
     return res.json({
       forwardUrl,
       paymentData: { ...f, checksum, merchantTransactionId, notificationUrl },
