@@ -12,6 +12,8 @@ connectDB();
 
 app.set("trust proxy", 1);
 
+app.use(express.urlencoded({ extended: true }));
+
 app.use(
   cors({
     origin: process.env.ORIGIN_URL,
